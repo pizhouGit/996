@@ -10,6 +10,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * 对比原始集合操作和Stream集合操作
@@ -100,8 +102,50 @@ public class StreamVs {
     /**
      * 以Stream流方式实现需求
      */
-
+    @Test
     public void newCartHandle(){
+        AtomicReference<Double> money = new AtomicReference<>(Double.valueOf(0.0));
+       List<String> resultSku = CartService.getCartSkuList()
+
+                .stream()
+                /**
+                 * 打印商品信息
+                 */
+                .peek(sku -> System.out.println(
+                        JSON.toJSONString(sku,true)
+                ))
+                /**
+                 * 过滤所有的图书信息
+                 */
+                .filter(sku -> !SkuCategoryEnum.BOOKS.equals(sku.getSkuCategory()))
+                /**
+                 * 排序---大--小
+                 */
+                .sorted(Comparator.comparing(Sku::getTotalPrice).reversed())
+                /**
+                 * 取前两个
+                 */
+                .limit(2)
+                /**
+                 * 计算商品总金额
+                 */
+                .peek(sku -> money.set(money.get()+ sku.getTotalPrice()))
+                /**
+                 * 获取商品的名称
+                 */
+                .map(sku ->sku.getSkuName())
+                /**
+                 * 收集结果
+                 */
+                .collect(Collectors.toList());
+
+        System.out.println(
+
+                JSON.toJSONString(resultSku,true)
+
+        );
+
+        System.out.println("商品金额"+money.get());
 
     }
 
