@@ -66,6 +66,9 @@ public class StreamOperator {
                 ));
     }
 
+    /**
+     * peek:对流中的元素进行遍历操作-----是中间操作不是终结操作
+     */
     @Test
     public void peek(){
         list.stream()
