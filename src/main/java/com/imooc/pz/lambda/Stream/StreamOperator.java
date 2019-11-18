@@ -7,10 +7,7 @@ import com.imooc.pz.lambda.cart.SkuCategoryEnum;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 演示流的各种操作
@@ -163,5 +160,42 @@ public class StreamOperator {
         Optional<Sku> any = list.stream().findAny();
         System.out.println(any);
     }
+
+
+    /**
+     * max:获取最大值
+     * mapToDouble：将一个元素映射为Double类型的
+     */
+    @Test
+    public void maxTest(){
+        OptionalDouble max = list.stream()
+                //获取总价
+                .mapToDouble(Sku::getTotalPrice)
+                .max();
+        System.out.println(max.getAsDouble());
+    }
+
+    /**
+     * min:获取最小值
+     * mapToDouble：将一个元素映射为Double类型的
+     */
+    @Test
+    public void minTest(){
+        OptionalDouble min = list.stream()
+                //获取总价
+                .mapToDouble(Sku::getTotalPrice)
+                .min();
+        System.out.println(min.getAsDouble());
+    }
+
+    /**
+     * count:获取元素中的总元素数
+     */
+    @Test
+    public void countTset(){
+        long count = list.stream().count();
+        System.out.println(count);
+    }
+
 
 }
