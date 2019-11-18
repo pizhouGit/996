@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 演示流的各种操作
@@ -141,6 +142,26 @@ public class StreamOperator {
                                 JSON.toJSONString(item,true)
                         )
                 );
+    }
+
+    /**
+     * findFirst找到第一个元素
+     */
+    @Test
+    public void findFisTest(){
+        Optional<Sku> first = list.stream()
+                .findFirst();
+        System.out.println(first);
+    }
+
+
+    /**
+     * findAny找到任意一个元素，随机
+     */
+    @Test
+    public void findAnTest(){
+        Optional<Sku> any = list.stream().findAny();
+        System.out.println(any);
     }
 
 }
