@@ -44,9 +44,16 @@ public class ValidationTest {
         Calendar instance = Calendar.getInstance();
         instance.set(2019,1,1);
         userInfo.setBirthday(instance.getTime());
+
+        UserInfo friend = new UserInfo();
+        friend.setUserId("002");
+        friend.setUserName("lis");
+        friend.setPassWord("98766555");
+        friend.setEmail("sdf@qq.com");
+
         userInfo.setFriends(new ArrayList(){
             {
-                add(new UserInfo());
+                add(friend);
             }
         });
     }
@@ -71,4 +78,36 @@ public class ValidationTest {
         set = validator.validate(userInfo);
 
     }
+
+    /**
+     * 级联验证测试方法
+     */
+    @Test
+    public void test() {
+       set = validator.validate(userInfo);
+
+    }
+
+    /**
+     * 分组验证测试
+     */
+    @Test
+    public void test2() {
+        //登陆
+      // set = validator.validate(userInfo,UserInfo.LoginGroup.class);
+       //注册
+       set = validator.validate(userInfo,UserInfo.RegisterGroup.class);
+
+    }
+
+
+    /**
+     * 组排序
+     */
+    @Test
+    public void test3() {
+        set = validator.validate(userInfo,UserInfo.Group.class);
+
+    }
+
 }

@@ -5,7 +5,10 @@ import lombok.Data;
 import lombok.NonNull;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.GroupSequence;
+import javax.validation.Valid;
 import javax.validation.constraints.*;
+import javax.validation.groups.Default;
 import java.util.Date;
 import java.util.List;
 
@@ -16,8 +19,21 @@ import java.util.List;
 
 public class UserInfo {
 
+    //登陆场景
+    public interface LoginGroup {}
+    //注册场景
+    public interface RegisterGroup {}
+
+    //组排序场景
+    @GroupSequence({
+            LoginGroup.class,
+            RegisterGroup.class,
+            Default.class
+    })
+    public interface Group{}
     //用户id
-    @NotNull(message = "用户id不能为空")
+    @NotNull(message = "用户id不能为空",
+            groups = LoginGroup.class)
     private String userId;
 
     //用户姓名---notEmpty 不会去掉前后空格
@@ -30,6 +46,8 @@ public class UserInfo {
     private String passWord;
 
     //用户邮箱
+    @NotNull(message = "邮箱不能为空",
+            groups = RegisterGroup.class)
     @Email(message = "邮箱必须为有效邮箱")
     private String email;
 
@@ -42,7 +60,7 @@ public class UserInfo {
 
     //好友列表
     @Size(min = 1,message = "不能少于1个好友")
-    private List<UserInfo> friends;
+    private List<@Valid UserInfo> friends;
 
     public String getUserId() {
         return userId;
