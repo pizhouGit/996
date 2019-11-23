@@ -8,8 +8,12 @@ import org.junit.Test;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.executable.ExecutableValidator;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -25,6 +29,12 @@ public class ValidationTest {
 
     //验证结果集合
     private Set<ConstraintViolation<UserInfo>> set;
+
+    //验证结果集合
+    private Set<ConstraintViolation<UserInfoService>> otherSet;
+
+
+
 
     /**
      * 初始化
@@ -63,7 +73,7 @@ public class ValidationTest {
      */
     @After
     public void print(){
-        set.forEach(
+        otherSet.forEach(
                 item->{
                     //输出验证错误信息
                     System.out.println(item.getMessage());
@@ -109,5 +119,64 @@ public class ValidationTest {
         set = validator.validate(userInfo,UserInfo.Group.class);
 
     }
+
+
+    /**
+     * 对方法输入参数进行约束注解校验
+     */
+    @Test
+    public void paramVaildation() throws NoSuchMethodException {
+        //获取验证校验执行器
+        ExecutableValidator executableValidator =
+                validator.forExecutables();
+
+        //待验证对象
+        UserInfoService userInfoService = new UserInfoService();
+
+        //待验证方法
+        Method setUserInfo = userInfoService.getClass().
+                getMethod("setUserInfo", UserInfo.class);
+
+        //方法输入参数
+        Object[] param = new Object[]{new UserInfo()};
+
+        //对方法的输入参数进行校验
+        otherSet = executableValidator.validateParameters(
+                userInfoService,
+                setUserInfo,
+                param);
+
+    }
+
+    /**
+     * 对方法返回值进行约束注解校验
+     * @throws NoSuchMethodException
+     */
+    @Test
+    public void paramVaildatio2() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        //获取验证校验执行器
+        ExecutableValidator executableValidator =
+                validator.forExecutables();
+
+        //待验证对象
+        UserInfoService userInfoService = new UserInfoService();
+
+        //待验证方法
+        Method getUserInfo = userInfoService.getClass().
+                getMethod("getUserInfo");
+
+        //调用方法得到返回值
+        Object invoke = getUserInfo.invoke(userInfoService);
+
+        //对方法的输入参数进行校验
+        otherSet = executableValidator.validateReturnValue(
+                userInfoService,
+                getUserInfo,
+                invoke
+        );
+
+    }
+
+
 
 }
